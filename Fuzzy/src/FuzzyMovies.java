@@ -36,7 +36,13 @@ public class FuzzyMovies {
         grupoVoto.add(new VariavelFuzzy("Voto_Alto", 6, 7, 8, 9));
         grupoVoto.add(new VariavelFuzzy("Voto_MuitoAlto", 7.5f, 8.5f, 10, 10));
 
-        // 5. SAÍDA FUZZY (Recomendação)
+        // 5. GENRE (NOTAS ATRIBUÍDAS MANUALMENTE)
+        GrupoVariaveis grupoNotasGenero = new GrupoVariaveis();
+        grupoNotasGenero.add(new VariavelFuzzy("Genero_Ruim", 0, 0, 2, 5));
+        grupoNotasGenero.add(new VariavelFuzzy("Genero_Bom", 4.5f, 5.5f, 6, 7.5f));
+        grupoNotasGenero.add(new VariavelFuzzy("Genero_Muito_Bom", 7, 8.5f, 10, 10));
+
+        // 6. SAÍDA FUZZY (Recomendação)
         GrupoVariaveis grupoRecomendacao = new GrupoVariaveis();
         grupoRecomendacao.add(new VariavelFuzzy("NaoRecomendado", 0, 0, 2, 5));
         grupoRecomendacao.add(new VariavelFuzzy("Recomendado", 4.5f, 5.5f, 6, 7.5f));
@@ -54,6 +60,8 @@ public class FuzzyMovies {
 
             String line = "";
             int linhaNum = 0;
+
+            GenerosNota generosnotas = new GenerosNota();
 
             while ((line = bfr.readLine()) != null && linhaNum < 1000) {
 
@@ -111,6 +119,16 @@ public class FuzzyMovies {
                         voteAvg = 0;
                     }
 
+                    float notaGenero = 0;
+                    try {
+                        String generoStr = spl[2].trim();
+                        if(!generoStr.isEmpty() && !generoStr.equals("null")){
+                            notaGenero=generosnotas.notasGenero.get(generoStr.toLowerCase().trim());
+                        }
+                    } catch (Exception e) {
+                        notaGenero = 0;
+                    }
+
                     // Pular filmes com dados insuficientes
                     if (budget <= 0 || voteAvg <= 0 || popularity > 900 || popularity < 0)
                         continue;
@@ -122,6 +140,7 @@ public class FuzzyMovies {
                     grupoPopularidade.fuzzifica(popularity, variaveis);
                     grupoRuntime.fuzzifica(runtime, variaveis);
                     grupoVoto.fuzzifica(voteAvg, variaveis);
+                    grupoNotasGenero.fuzzifica(notaGenero, variaveis);
 
                     // ========== APLICAR REGRAS FUZZY ==========
 
