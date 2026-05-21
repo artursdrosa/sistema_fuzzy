@@ -38,7 +38,9 @@ public class FuzzyMovies {
 
         // 5. SAÍDA FUZZY (Recomendação)
         GrupoVariaveis grupoRecomendacao = new GrupoVariaveis();
-        // Será preenchido pelas regras
+        grupoRecomendacao.add(new VariavelFuzzy("NaoRecomendado", 0, 0, 2, 5));
+        grupoRecomendacao.add(new VariavelFuzzy("Recomendado", 4.5f, 5.5f, 6, 7.5f));
+        grupoRecomendacao.add(new VariavelFuzzy("MuitoRecomendado", 7, 8.5f, 10, 10));
 
         // ========== LER CSV ==========
         try {
@@ -109,17 +111,6 @@ public class FuzzyMovies {
                         voteAvg = 0;
                     }
 
-//                    // Vote Count (índice 20)
-//                    int voteCount = 0;
-//                    try {
-//                        String voteCountStr = spl[20].trim();
-//                        if (!voteCountStr.isEmpty() && !voteCountStr.equals("null")) {
-//                            voteCount = Integer.parseInt(voteCountStr);
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        voteCount = 0;
-//                    }
-
                     // Pular filmes com dados insuficientes
                     if (budget <= 0 || voteAvg <= 0 || popularity > 900 || popularity < 0)
                         continue;
@@ -133,17 +124,6 @@ public class FuzzyMovies {
                     grupoVoto.fuzzifica(voteAvg, variaveis);
 
                     // ========== APLICAR REGRAS FUZZY ==========
-
-//                    // Inicializar saídas
-//                    if (!variaveis.containsKey("NaoRecomendado")) {
-//                        variaveis.put("NaoRecomendado", 0f);
-//                    }
-//                    if (!variaveis.containsKey("Recomendado")) {
-//                        variaveis.put("Recomendado", 0f);
-//                    }
-//                    if (!variaveis.containsKey("MuitoRecomendado")) {
-//                        variaveis.put("MuitoRecomendado", 0f);
-//                    }
 
                     // ══════════════════════════════════════════════
                     // MUITO RECOMENDADO
@@ -214,7 +194,7 @@ public class FuzzyMovies {
 
                     float score = 0;
                     if ((naoRec + rec + muitoRec) > 0) {
-                        score = (naoRec + rec * 5f + muitoRec * 9f)
+                        score = (naoRec + rec * 5.75f + muitoRec * 9.25f)
                                 / (naoRec + rec + muitoRec);
                     }
 
@@ -234,7 +214,6 @@ public class FuzzyMovies {
                     );
 
                 } catch (Exception e) {
-                    // Pular linhas com erro
                     continue;
                 }
             }
